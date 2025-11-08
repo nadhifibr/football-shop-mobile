@@ -55,3 +55,26 @@ MaterialApp adalah widget untuk membangun aplikasi dengan gaya Material Design (
 ### Jelaskan konsep "hot reload" di Flutter dan bagaimana bedanya dengan "hot restart".
 
 Hot reload adalah fitur yang memungkinkan developer melihat perubahan kode secara langsung tanpa kehilangan state aplikasi. Perubahan UI atau logic akan langsung muncul di layar. Hot restart harus me-restart aplikasi dari awal, termasuk menghapus semua state yang tersimpan di memori.
+
+---
+
+## Tugas Individu 8 - PBP Ganjil 2025/2026
+
+### Jelaskan perbedaan antara Navigator.push() dan Navigator.pushReplacement() pada Flutter. Dalam kasus apa sebaiknya masing-masing digunakan pada aplikasi Football Shop kamu?
+
+Dalam routing, terdapat suatu stack route yang dikelola oleh Navigator. Navigator.push() akan menambahkan route ditambahkan pada paling atas stack, sehingga route yang baru ditambah akan muncul dan ditampilkan ke pengguna. Navigator.pushReplacement() bekerja dengan menghapus route yang sedang ditampilkan kepada pengguna dan menggantinya dengan suatu route. Ketika ingin Add Product, kita cukup menggunakan push, maka ketika kita ingin kembali ke halaman sebelumnya (posisinya belum add product), kita bisa langsung Navigator.pop() saja. Tetapi ketika kita sudah menambah produk tersebut, kita gunakan pushReplacement agar tidak ke halaman saat kita Add Product lagi.
+
+### Bagaimana kamu memanfaatkan hierarchy widget seperti Scaffold, AppBar, dan Drawer untuk membangun struktur halaman yang konsisten di seluruh aplikasi?
+
+Saya memanfaatkan hierarchy widget seperti Scaffold, AppBar, dan Drawer untuk menjaga konsistensi struktur antar halaman.
+Scaffold berperan sebagai kerangka utama halaman yang menampung elemen-elemen standar seperti AppBar dan Drawer.
+AppBar digunakan untuk menampilkan judul dan aksi halaman dengan gaya yang seragam, sedangkan Drawer menyediakan navigasi global agar pengguna dapat berpindah antar halaman dengan mudah.
+Dengan kombinasi ketiganya, setiap halaman dalam aplikasi memiliki tampilan dan navigasi yang konsisten.
+
+### Dalam konteks desain antarmuka, apa kelebihan menggunakan layout widget seperti Padding, SingleChildScrollView, dan ListView saat menampilkan elemen-elemen form? Berikan contoh penggunaannya dari aplikasi kamu.
+
+Padding dapat memberi jarak antar elemen form dan dari tepi layar. Seandainya saya tidak memakai Padding di ProductFormPage, semua TextFormField akan berdempetan dengan satu sama lain. SingleChildScrollView mengizinkan halaman untuk di-scroll ketika kontennya terlalu panjang. Lalu ListView berguna untuk menampung banyak item dalam bentuk list vertikal dan bisa di-scroll ketika item-nya terlalu banyak.
+
+### Bagaimana kamu menyesuaikan warna tema agar aplikasi Football Shop memiliki identitas visual yang konsisten dengan brand toko?
+
+Saya membiarkan appBar dari ProductFormPage menjadi warna biru, sama seperti appBar dari HomePage.

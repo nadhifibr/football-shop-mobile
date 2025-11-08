@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:football_shop/screens/productlist_form.dart';
+import 'package:football_shop/widgets/left_drawer.dart';
 
 class MyHomePage extends StatelessWidget {
     MyHomePage({super.key});
@@ -16,19 +18,18 @@ class MyHomePage extends StatelessWidget {
     @override
     Widget build(BuildContext context) {
         return Scaffold(
-      // AppBar adalah bagian atas halaman yang menampilkan judul.
-      appBar: AppBar(
-        // Judul aplikasi "FeetBalls" dengan teks putih dan tebal.
-        title: const Text(
-          'FeetBalls',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+        appBar: AppBar(
+          title: const Text(
+            'FeetBalls',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
+          // Warna latar belakang AppBar diambil dari skema warna tema aplikasi.
+          backgroundColor: Theme.of(context).colorScheme.primary,
         ),
-        // Warna latar belakang AppBar diambil dari skema warna tema aplikasi.
-        backgroundColor: Theme.of(context).colorScheme.primary,
-      ),
+        drawer: LeftDrawer(),
       // Body halaman dengan padding di sekelilingnya.
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -157,6 +158,11 @@ class ItemCard extends StatelessWidget {
             ..showSnackBar(
               SnackBar(content: Text("Kamu telah menekan tombol ${item.name}!"))
             );
+
+          // Navigate ke route yang sesuai (tergantung jenis tombol)
+          if (item.name == "Create Product") {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const ProductFormPage()));
+          }
         },
         // Container untuk menyimpan Icon dan Text
         child: Container(
