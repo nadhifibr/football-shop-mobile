@@ -1,43 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:football_shop/screens/productlist_form.dart';
+import 'package:football_shop/screens/product_entry_list.dart';
+import 'package:football_shop/screens/login.dart';
 import 'package:football_shop/widgets/left_drawer.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class MyHomePage extends StatelessWidget {
-    MyHomePage({super.key});
+  MyHomePage({super.key});
 
-    final String nama = "Muhammad Nadhif Ibrahim";
-    final String npm = "2406398324";
-    final String kelas = "C";
+  final String nama = "Muhammad Nadhif Ibrahim";
+  final String npm = "2406398324";
+  final String kelas = "C";
 
-    final List<ItemHomepage> items = [
-      ItemHomepage("All Products", Icons.shopping_bag, Colors.blue),
-      ItemHomepage("My Products", Icons.person, Colors.green),
-      ItemHomepage("Create Product", Icons.add, Colors.red),
-    ];
+  final List<ItemHomepage> items = [
+    ItemHomepage("All Products", Icons.shopping_bag, Colors.blue),
+    ItemHomepage("My Products", Icons.person, Colors.green),
+    ItemHomepage("Create Product", Icons.add, Colors.red),
+    ItemHomepage("Product List", Icons.list, Colors.orange),
+    ItemHomepage("Logout", Icons.logout, Colors.black87),
+  ];
 
-    @override
-    Widget build(BuildContext context) {
-        return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'FeetBalls',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'FeetBalls',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
-          // Warna latar belakang AppBar diambil dari skema warna tema aplikasi.
-          backgroundColor: Theme.of(context).colorScheme.primary,
         ),
-        drawer: LeftDrawer(),
-      // Body halaman dengan padding di sekelilingnya.
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
+      drawer: LeftDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        // Menyusun widget secara vertikal dalam sebuah kolom.
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Row untuk menampilkan 3 InfoCard secara horizontal.
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -47,16 +49,11 @@ class MyHomePage extends StatelessWidget {
               ],
             ),
 
-            // Memberikan jarak vertikal 16 unit.
             const SizedBox(height: 16.0),
 
-            // Menempatkan widget berikutnya di tengah halaman.
             Center(
               child: Column(
-                // Menyusun teks dan grid item secara vertikal.
-
                 children: [
-                  // Menampilkan teks sambutan dengan gaya tebal dan ukuran 18.
                   const Padding(
                     padding: EdgeInsets.only(top: 16.0),
                     child: Text(
@@ -68,21 +65,20 @@ class MyHomePage extends StatelessWidget {
                     ),
                   ),
 
-                  // Grid untuk menampilkan ItemCard dalam bentuk grid 3 kolom.
-                  GridView.count(
-                    primary: true,
-                    padding: const EdgeInsets.all(20),
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    crossAxisCount: 3,
-                    // Agar grid menyesuaikan tinggi kontennya.
-                    shrinkWrap: true,
+                  Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 600), // batas lebar
+                      child: GridView.extent(
+                        maxCrossAxisExtent: 180,
+                        padding: const EdgeInsets.all(20),
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                        shrinkWrap: true,
+                        children: items.map((item) => ItemCard(item)).toList(),
+                      ),
+                    ),
+                  )
 
-                    // Menampilkan ItemCard untuk setiap item dalam list items.
-                    children: items.map((ItemHomepage item) {
-                      return ItemCard(item);
-                    }).toList(),
-                  ),
                 ],
               ),
             ),
@@ -90,27 +86,22 @@ class MyHomePage extends StatelessWidget {
         ),
       ),
     );
-    }
+  }
 }
 
 class InfoCard extends StatelessWidget {
-  // Kartu informasi yang menampilkan title dan content.
-
-  final String title;  // Judul kartu.
-  final String content;  // Isi kartu.
+  final String title;
+  final String content;
 
   const InfoCard({super.key, required this.title, required this.content});
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      // Membuat kotak kartu dengan bayangan dibawahnya.
       elevation: 2.0,
       child: Container(
-        // Mengatur ukuran dan jarak di dalam kartu.
-        width: MediaQuery.of(context).size.width / 3.5, // menyesuaikan dengan lebar device yang digunakan.
+        width: MediaQuery.of(context).size.width / 3.5,
         padding: const EdgeInsets.all(16.0),
-        // Menyusun title dan content secara vertikal.
         child: Column(
           children: [
             Text(
@@ -127,49 +118,67 @@ class InfoCard extends StatelessWidget {
 }
 
 class ItemHomepage {
- final String name;
- final IconData icon;
- final Color color;
+  final String name;
+  final IconData icon;
+  final Color color;
 
- ItemHomepage(this.name, this.icon, this.color);
+  ItemHomepage(this.name, this.icon, this.color);
 }
 
 class ItemCard extends StatelessWidget {
-  // Menampilkan kartu dengan ikon dan nama.
+  final ItemHomepage item;
 
-  final ItemHomepage item; 
-
-  const ItemCard(this.item, {super.key}); 
+  const ItemCard(this.item, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      // Menentukan warna latar belakang dari tema aplikasi.
-      color: item.color,
-      // Membuat sudut kartu melengkung.
-      borderRadius: BorderRadius.circular(12),
+    final request = context.read<CookieRequest>();
 
+    return Material(
+      color: item.color,
+      borderRadius: BorderRadius.circular(12),
       child: InkWell(
-        // Aksi ketika kartu ditekan.
-        onTap: () {
-          // Menampilkan pesan SnackBar saat kartu ditekan.
+        onTap: () async {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              SnackBar(content: Text("Kamu telah menekan tombol ${item.name}!"))
+              SnackBar(content: Text("Kamu telah menekan tombol ${item.name}!")),
             );
 
-          // Navigate ke route yang sesuai (tergantung jenis tombol)
           if (item.name == "Create Product") {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const ProductFormPage()));
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProductFormPage()),
+            );
+          }
+
+          if (item.name == "Product List") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProductEntryListPage()),
+            );
+          }
+
+          if (item.name == "Logout") {
+            final response =
+                await request.logout("https://muhammad-nadhif41-footballshop.pbp.cs.ui.ac.id/logout-ajax/");
+
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Logged out successfully.")),
+              );
+
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+              );
+            }
           }
         },
-        // Container untuk menyimpan Icon dan Text
         child: Container(
           padding: const EdgeInsets.all(8),
           child: Center(
             child: Column(
-              // Menyusun ikon dan teks di tengah kartu.
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
@@ -177,7 +186,7 @@ class ItemCard extends StatelessWidget {
                   color: Colors.white,
                   size: 30.0,
                 ),
-                const Padding(padding: EdgeInsets.all(3)),
+                const SizedBox(height: 3),
                 Text(
                   item.name,
                   textAlign: TextAlign.center,
@@ -190,5 +199,4 @@ class ItemCard extends StatelessWidget {
       ),
     );
   }
-
 }
